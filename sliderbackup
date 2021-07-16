@@ -1,0 +1,151 @@
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { StyledMovieSlider } from "../styles/styledIndex";
+import Image from "next-images";
+
+export default function MovieSlider({ seed, des, genre }) {
+  //slider settings
+  const settings = {
+    autoplay: false,
+    autoplaySpeed: 3000,
+    dots: true,
+    infinite: true,
+    centerMode: true,
+    centerPadding: "0px",
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    // nextArrow: <ArrowRight />,
+    // prevArrow: <ArrowLeft />,
+  };
+
+  return (
+    <StyledMovieSlider>
+      <div className="movie-silider">
+        <div className="top-content">
+          <div className="top-content-info">
+            {genre}
+            <p>{des}</p>
+          </div>
+          <a href="">tüm $kategory gör</a>
+        </div>
+        <Slider {...settings}>
+          {seed.map((movie) => (
+            <div>
+              <img src={movie.image} alt="" />
+            </div>
+          ))}
+        </Slider>
+        {console.log(seed)}
+      </div>
+    </StyledMovieSlider>
+  );
+}
+
+import React, { useState } from "react";
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
+import { useSwipeable } from "react-swipeable";
+import { StyledMovieSlider } from "../styles/styledIndex";
+
+const ImageSlider = ({ Slider }) => {
+  const [current, setCurrent] = useState(0);
+  const length = Slider.length;
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => nextSlide(),
+    onSwipedRight: () => prevSlide(),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
+  });
+  const prevSlide = () => {
+    setCurrent(current === 0 ? length - 1 : current - 1);
+  };
+  const nextSlide = () => {
+    setCurrent(current === length - 1 ? 0 : current + 1);
+  };
+  if (!Array.isArray || length <= 0) {
+    return null;
+  }
+
+  return (
+    <StyledMovieSlider>
+      <section className="slider">
+        <FaArrowAltCircleLeft className="left-arrow" onClick={prevSlide} />
+        <FaArrowAltCircleRight className="right-arrow" onClick={nextSlide} />
+        {Slider.map((slide, index) => {
+          return (
+            <div
+              className={index === current ? "slide active" : "slide"}
+              key={index}
+            >
+              <img
+                {...handlers}
+                src={slide.image}
+                alt=""
+                className="image"
+                draggable="false"
+              />
+              ;
+            </div>
+          );
+        })}
+      </section>
+    </StyledMovieSlider>
+  );
+};
+
+export default ImageSlider;
+
+
+
+
+
+  .slider {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  .slide.active {
+    opacity: 1;
+    transition: 1s ease;
+  }
+  .slide {
+    opacity: 0;
+    transition: 1s ease;
+  }
+  .image {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1000px;
+    height: 100%;
+    border-radius: 10px;
+  }
+
+  .right-arrow {
+    position: absolute;
+    top: 50%;
+    right: 32px;
+    font-size: 3rem;
+    color: #000;
+    z-index: 10;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .left-arrow {
+    position: absolute;
+    top: 50%;
+    left: 32px;
+    font-size: 3rem;
+    color: #000;
+    z-index: 10;
+    cursor: pointer;
+    user-select: none;
+  }
